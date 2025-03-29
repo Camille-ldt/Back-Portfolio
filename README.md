@@ -25,7 +25,7 @@ Bienvenue sur mon portfolio ! 🚀 Ce projet a pour but de présenter mes compé
 ### Installation du frontend
 
 ```sh
-cd client
+cd Front-Portfolio
 npm install
 npm run dev
 ```
@@ -33,7 +33,7 @@ npm run dev
 ### Installation du backend
 
 ```sh
-cd back
+cd api
 composer install
 php -S localhost:8000
 ```
