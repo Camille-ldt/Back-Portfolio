@@ -10,6 +10,16 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
+$appEnv = getenv('APP_ENV') ?: 'development';
+$appDebug = getenv('APP_DEBUG') ?: 'true';
+$appUrl = getenv('APP_URL') ?: 'http://localhost';
+
+echo json_encode([
+    "environment" => $appEnv,
+    "debug" => $appDebug,
+    "api_url" => $appUrl
+]);
+
 // Chargement des variables d'environnement
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
