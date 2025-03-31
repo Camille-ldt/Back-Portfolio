@@ -20,11 +20,14 @@ echo json_encode([
     "api_url" => $appUrl
 ]);
 
-// Chargement des variables d'environnement
-$dotenv = Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+// Charge .env uniquement si l'environnement est en développement (non production)
+if ($appEnv !== 'production') {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    $dotenv->load();
+}
 
-$secretKey = $_ENV['SECRET_KEY']; 
+// Charger les variables d'environnement depuis Render (en production)
+$secretKey = getenv('SECRET_KEY'); 
 
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -69,21 +72,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $mail = new PHPMailer(true);
 
         try {
-            // Configuration du serveur SMTP avec les variables .env
+            // Configuration du serveur SMTP avec les variables d'environnement
             $mail->isSMTP();
-            $mail->Host = $_ENV['SMTP_HOST'];
+            $mail->Host = getenv('SMTP_HOST'); 
             $mail->SMTPAuth = true;
-            $mail->Username = $_ENV['SMTP_USERNAME'];
-            $mail->Password = $_ENV['SMTP_PASSWORD'];
-            $mail->SMTPSecure = $_ENV['SMTP_SECURE'];
-            $mail->Port = $_ENV['SMTP_PORT'];
+            $mail->Username = getenv('SMTP_USERNAME');
+            $mail->Password = getenv('SMTP_PASSWORD');
+            $mail->SMTPSecure = getenv('SMTP_SECURE');
+            $mail->Port = getenv('SMTP_PORT');
             $mail->CharSet = 'UTF-8';  
             $mail->SMTPDebug = 0;  
             $mail->Debugoutput = 'html';
 
             // Informations concernant l'expéditeur et le destinataire
-            $mail->setFrom($_ENV['SMTP_USERNAME'], "$firstname $lastname");
-            $mail->addAddress($_ENV['RECEIVER_EMAIL'], 'Destinataire');
+            $mail->setFrom(getenv('SMTP_USERNAME'), "$firstname $lastname");
+            $mail->addAddress(getenv('RECEIVER_EMAIL'), 'Destinataire');
 
             // Contenu de l'e-mail
             $mail->isHTML(true);
