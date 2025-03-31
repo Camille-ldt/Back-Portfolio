@@ -10,5 +10,7 @@ COPY . .
 # Exposer le port 80
 EXPOSE 80
 
+RUN ls -lah /var/www/html/api
+
 # Commande pour démarrer le serveur PHP interne
 CMD ["php", "-S", "0.0.0.0:80", "-t", "/var/www/html/api"]
