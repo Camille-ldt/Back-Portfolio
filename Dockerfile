@@ -1,16 +1,28 @@
-# Utiliser une image PHP officielle sans Apache
-FROM php:8.2-cli
+FROM php:8.1-cli
 
-# Copier les fichiers du projet dans le conteneur
-WORKDIR /var/www/html
+# Installer les dépendances nécessaires pour Composer et Symfony
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    zip \
+    libzip-dev \
+    && docker-php-ext-install zip
 
-# Copier tous les fichiers du projet dans le conteneur
-COPY . .
+# Copier les fichiers composer.json et composer.lock pour installer les dépendances
+COPY composer.json composer.lock /var/www/
 
-# Exposer le port 80
+# Se déplacer dans le répertoire de travail
+WORKDIR /var/www/
+
+# Installer les dépendances PHP avec Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN composer install --no-interaction
+
+# Copier tout le reste du projet
+COPY . /var/www/
+
+# Exposer le port de votre application
 EXPOSE 80
 
-RUN ls -lah /var/www/html
-
-# Commande pour démarrer le serveur PHP interne
-CMD ["php", "-S", "0.0.0.0:80", "-t", "/var/www/html"]
+# Définir le répertoire de travail
+CMD ["php", "-S", "0.0.0.0:80", "-t", "/var/www"]
