@@ -20,6 +20,11 @@ echo json_encode([
     "api_url" => $appUrl
 ]);
 
+if ($_SERVER["REQUEST_URI"] === "/favicon.ico") {
+    header("HTTP/1.1 204 No Content");
+    exit;
+}
+
 // Charge .env uniquement si l'environnement est en développement (non production)
 if ($appEnv !== 'production') {
     $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
