@@ -1,14 +1,14 @@
-# Utiliser une image PHP officielle avec Apache
-FROM php:8.2-apache
+# Utiliser une image PHP officielle sans Apache
+FROM php:8.2-cli
 
-# Définir le dossier de travail
+# Copier les fichiers du projet dans le conteneur
 WORKDIR /var/www/html
 
-# Copier tout le code du projet dans le conteneur
+# Copier tous les fichiers du projet dans le conteneur
 COPY . .
 
 # Exposer le port 80
 EXPOSE 80
 
-# Lancer Apache au démarrage
-CMD ["apache2-foreground"]
+# Commande pour démarrer le serveur PHP interne
+CMD ["php", "-S", "0.0.0.0:80", "-t", "/var/www/html/api"]
