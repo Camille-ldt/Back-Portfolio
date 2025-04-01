@@ -14,11 +14,11 @@ $appEnv = getenv('APP_ENV') ?: 'development';
 $appDebug = getenv('APP_DEBUG') ?: 'true';
 $appUrl = getenv('APP_URL') ?: 'http://localhost';
 
-echo json_encode([
-    "environment" => $appEnv,
-    "debug" => $appDebug,
-    "api_url" => $appUrl
-]);
+// echo json_encode([
+//     "environment" => $appEnv,
+//     "debug" => $appDebug,
+//     "api_url" => $appUrl
+// ]);
 
 if ($_SERVER["REQUEST_URI"] === "/favicon.ico") {
     header("HTTP/1.1 204 No Content");
@@ -93,29 +93,55 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $mail->setFrom(getenv('SMTP_USERNAME'), "$firstname $lastname");
             $mail->addAddress(getenv('RECEIVER_EMAIL'), 'Destinataire');
 
+            // // Contenu de l'e-mail
+            // $mail->isHTML(true);
+            // $mail->Subject = 'Nouveau message du formulaire de contact 📩';
+            // $mail->Body = "
+            //     <h3>Nom : $lastname</h3>
+            //     <h3>Prénom : $firstname</h3>
+            //     <h4>Entreprise : $company</h4>
+            //     <h4>Email : $email</h4>
+            //     <h4>Numéro de téléphone : $number</h4>
+            //     <p>Message : $message</p>
+            // ";
+            // $mail->AltBody = "Nom: $lastname\nPrénom: $firstname\nEntreprise: $company\nEmail: $email\nNuméro de téléphone: $number\nMessage: $message"; 
+
             // Contenu de l'e-mail
             $mail->isHTML(true);
             $mail->Subject = 'Nouveau message du formulaire de contact 📩';
             $mail->Body = "
-                <h3>Nom : $lastname</h3>
-                <h3>Prénom : $firstname</h3>
-                <h4>Entreprise : $company</h4>
-                <h4>Email : $email</h4>
-                <h4>Numéro de téléphone : $number</h4>
-                <p>Message : $message</p>
+                <h3>Nom : {$formData['lastname']}</h3>
+                <h3>Prénom : {$formData['firstname']}</h3>
+                <h4>Entreprise : {$formData['company']}</h4>
+                <h4>Email : {$formData['email']}</h4>
+                <h4>Numéro de téléphone : {$formData['number']}</h4>
+                <p>Message : {$formData['message']}</p>
             ";
-            $mail->AltBody = "Nom: $lastname\nPrénom: $firstname\nEntreprise: $company\nEmail: $email\nNuméro de téléphone: $number\nMessage: $message"; 
+            $mail->AltBody = "Nom: {$formData['lastname']}\nPrénom: {$formData['firstname']}\nEntreprise: {$formData['company']}\nEmail: {$formData['email']}\nNuméro de téléphone: {$formData['number']}\nMessage: {$formData['message']}"; 
 
-            // Envoi du mail
-            $mail->send();
-            echo json_encode(["success" => true, "message" => "Message envoyé avec succès ! 🎉"]);
-        } catch (Exception $e) {
-            echo json_encode(["success" => false, "message" => "Erreur lors de l'envoi : {$mail->ErrorInfo} 😞"]);
-        }
-    } else {
-        echo json_encode(["success" => false, "message" => "Veuillez remplir tous les champs obligatoires. ⚠️"]);
-    }
+//             // Envoi du mail
+//             $mail->send();
+//             echo json_encode(["success" => true, "message" => "Message envoyé avec succès ! 🎉"]);
+//         } catch (Exception $e) {
+//             echo json_encode(["success" => false, "message" => "Erreur lors de l'envoi : {$mail->ErrorInfo} 😞"]);
+//         }
+//     } else {
+//         echo json_encode(["success" => false, "message" => "Veuillez remplir tous les champs obligatoires. ⚠️"]);
+//     }
+// } else {
+//     echo json_encode(["success" => false, "message" => "Méthode non autorisée. 🚫"]);
+// }
+
+// Envoi du mail
+$mail->send();
+echo json_encode(["success" => true, "message" => "Message envoyé avec succès ! 🎉"]);
+} catch (Exception $e) {
+echo json_encode(["success" => false, "message" => "Erreur lors de l'envoi : {$mail->ErrorInfo} 😞"]);
+}
 } else {
-    echo json_encode(["success" => false, "message" => "Méthode non autorisée. 🚫"]);
+echo json_encode(["success" => false, "message" => "Veuillez remplir tous les champs obligatoires. ⚠️"]);
+}
+} else {
+echo json_encode(["success" => false, "message" => "Méthode non autorisée. 🚫"]);
 }
 ?>
